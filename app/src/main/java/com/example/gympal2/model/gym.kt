@@ -9,8 +9,7 @@ data class Gym(
     val name: String,
     val rating: Int,
     val workingHours: List<WorkHours>,
-
-    )
+)
 
 
 data class WorkHours(

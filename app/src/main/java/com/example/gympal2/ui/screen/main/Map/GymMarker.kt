@@ -48,6 +48,7 @@ fun GymMarker(
 
 
     ) {
+        println("gym is selected: $isSelected")
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = if (checkIfGymOpen(gym.workingHours)) markerPair.first else markerPair.second),

@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.scarlet.coroutines)
     implementation(libs.scarlet.lifecycle.android)
     implementation(libs.scarlet.gson)
+    implementation(libs.scarlet.rxjava)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.compose.runtime.livedata)
     implementation(libs.rxjava)

@@ -2,15 +2,14 @@ package com.example.gympal2.di
 
 
 import GymViewModel
-import com.example.gympal2.data.network.MyWebSocketListener
+import WebSocketService
 import com.example.gympal2.data.network.RetrofitClient
 import com.example.gympal2.data.repository.AuthRepository
 import com.example.gympal2.data.repository.GymRepository
-import com.example.gympal2.util.API_WS_URL
 import com.example.gympal2.viewmodel.AuthViewModel
 import com.example.gympal2.viewmodel.WebSocketViewModel
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.example.gympal2.viewmodel.createScarletInstance
+import com.tinder.scarlet.Scarlet
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -29,16 +28,11 @@ val appModule = module {
 
     viewModel { GymViewModel(get()) }
 
-    single { OkHttpClient() }
+    single { createScarletInstance() }
 
-    single {
-        val client: OkHttpClient = get()
-        val request = Request.Builder().url(API_WS_URL).build()
-        client.newWebSocket(request, MyWebSocketListener())
-    }
+    single { get<Scarlet>().create(WebSocketService::class.java) }
 
     viewModel { WebSocketViewModel(get()) }
 
 }
-
 

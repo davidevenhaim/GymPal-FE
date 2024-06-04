@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,22 +27,19 @@ import androidx.compose.ui.unit.dp
 import com.example.gympal2.model.LoginData
 import com.example.gympal2.ui.shared.AppTextField
 import com.example.gympal2.util.AuthFields
-import com.example.gympal2.util.MAX_STRING_LENGTH
-import com.example.gympal2.util.MIN_PASSWORD_LENGTH
-import com.example.gympal2.util.MIN_STRING_LENGTH
-import com.example.gympal2.viewmodel.AuthState
+import com.example.gympal2.util.ValidationResult
+import com.example.gympal2.util.validateLoginForm
 
 
 @Composable
 fun LoginScreen(
     onLogin: (String, String) -> Unit,
     toggleIsLogin: () -> Unit,
-    authState: AuthState,
     modifier: Modifier = Modifier
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf("") }
+    var formState by remember { mutableStateOf(LoginData()) }
+    var usernameError by remember { mutableStateOf<ValidationResult?>(null) }
+    var passwordError by remember { mutableStateOf<ValidationResult?>(null) }
 
     Column(
         modifier = modifier
@@ -61,21 +57,27 @@ fun LoginScreen(
         Spacer(modifier = modifier.height(32.dp))
 
         AppTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = formState.username,
+            onValueChange = { formState = formState.copy(username = it) },
             label = AuthFields.Username,
             modifier = modifier.fillMaxWidth(),
-            isError = error == AuthFields.Username,
+            isError = usernameError?.isValid == false,
         )
+        if (usernameError?.isValid == false) {
+            ErrorText(text = usernameError!!.errorMessage!!)
+        }
 
         AppTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = formState.password,
+            onValueChange = { formState = formState.copy(password = it) },
             label = AuthFields.Password,
             modifier = modifier.fillMaxWidth(),
-            isError = error == AuthFields.Password,
+            isError = passwordError?.isValid == false,
             isPassword = true,
         )
+        if (passwordError?.isValid == false) {
+            ErrorText(text = passwordError!!.errorMessage!!)
+        }
 
         Spacer(modifier = modifier.height(8.dp))
 
@@ -89,39 +91,16 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                val validationResponse =
-                    validateForm(LoginData(username, password))
-                println("IM here $validationResponse")
+                val validationErrors = validateLoginForm(formState)
+                usernameError = validationErrors["username"]
+                passwordError = validationErrors["password"]
 
-                if (validationResponse == true) {
-                    print("On login will be called.")
-                    onLogin(username, password)
-                } else {
-                    error = validationResponse.toString()
+                if (validationErrors.values.all { it.isValid }) {
+                    onLogin(formState.username, formState.password)
                 }
             },
         ) {
             Text("Login")
         }
-        if (error.isNotEmpty()) {
-            Text("There is an error in field $error", color = MaterialTheme.colorScheme.error)
-        }
     }
-}
-
-
-fun validateForm(data: LoginData): Any {
-    val (username, password) = data
-
-    if (username.length < MIN_STRING_LENGTH || username.length > MAX_STRING_LENGTH) {
-        return AuthFields.Username
-    }
-
-    if (password.length < MIN_PASSWORD_LENGTH ||
-        password.length > MAX_STRING_LENGTH
-    ) {
-        return AuthFields.Password
-    }
-
-    return true
 }

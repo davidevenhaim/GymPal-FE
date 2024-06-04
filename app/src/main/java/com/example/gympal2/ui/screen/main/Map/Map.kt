@@ -17,7 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.gympal2.model.Gym
-import com.example.gympal2.util.MAP_ZOOM
+import com.example.gympal2.ui.screen.main.Map.GymBottomSheet.GymDetailsBottomSheet
+import com.example.gympal2.util.MAP_INITIAL_ZOOM
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -41,13 +42,14 @@ fun Map(gyms: List<Gym>) {
     }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(centerTlvLocation, MAP_ZOOM)
+        position = CameraPosition.fromLatLngZoom(centerTlvLocation, MAP_INITIAL_ZOOM)
     }
 
     if (isSheetOpen) {
         ModalBottomSheet(
             onDismissRequest = { isSheetOpen = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            modifier = Modifier.fillMaxSize()
         ) {
             selectedGym?.let { GymDetailsBottomSheet(it) } ?: Box {
                 Text(text = "Something went wrong")
@@ -70,7 +72,7 @@ fun Map(gyms: List<Gym>) {
                         changeMapsLocation(cameraPositionState, it)
                     }
                 },
-                isSelected = selectedGym?.id == gym.id
+                isSelected = selectedGym?.id.equals(gym.id)
             )
         }
     }
@@ -78,6 +80,7 @@ fun Map(gyms: List<Gym>) {
 }
 
 suspend fun changeMapsLocation(cameraPositionState: CameraPositionState, newPosition: LatLng) {
-    val cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, MAP_ZOOM)
+    val cameraUpdate =
+        CameraUpdateFactory.newLatLngZoom(newPosition, cameraPositionState.position.zoom)
     cameraPositionState.animate(cameraUpdate)
 }

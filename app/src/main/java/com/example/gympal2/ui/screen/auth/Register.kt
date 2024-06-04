@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,11 +26,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.gympal2.model.RegisterData
 import com.example.gympal2.ui.shared.AppTextField
-import com.example.gympal2.util.AuthFields
-import com.example.gympal2.util.MAX_STRING_LENGTH
-import com.example.gympal2.util.MIN_PASSWORD_LENGTH
-import com.example.gympal2.util.MIN_STRING_LENGTH
-import com.example.gympal2.viewmodel.AuthState
+import com.example.gympal2.util.ValidationResult
+import com.example.gympal2.util.validateRegisterForm
 
 const val loginNowText = "Already have an account? Click to login"
 
@@ -39,13 +35,13 @@ const val loginNowText = "Already have an account? Click to login"
 fun RegisterScreen(
     onRegister: (String, String, String) -> Unit,
     toggleIsLogin: () -> Unit,
-    authState: AuthState,
     modifier: Modifier = Modifier
 ) {
-    var username by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf("") }
+
+    var formState by remember { mutableStateOf(RegisterData()) }
+    var usernameError by remember { mutableStateOf<ValidationResult?>(null) }
+    var nameError by remember { mutableStateOf<ValidationResult?>(null) }
+    var passwordError by remember { mutableStateOf<ValidationResult?>(null) }
 
     Column(
         modifier = modifier
@@ -63,29 +59,38 @@ fun RegisterScreen(
         Spacer(modifier = modifier.height(32.dp))
 
         AppTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = formState.username,
+            onValueChange = { formState = formState.copy(username = it) },
             label = "Username",
             modifier = modifier.fillMaxWidth(),
-            isError = error == AuthFields.Username,
+            isError = usernameError?.isValid == false,
         )
+        if (usernameError?.isValid == false) {
+            ErrorText(text = usernameError!!.errorMessage!!)
+        }
 
         AppTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = formState.name,
+            onValueChange = { formState = formState.copy(name = it) },
             label = "Name",
             modifier = modifier.fillMaxWidth(),
-            isError = error == AuthFields.Name,
+            isError = nameError?.isValid == false,
         )
+        if (nameError?.isValid == false) {
+            ErrorText(text = nameError!!.errorMessage!!)
+        }
 
         AppTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = formState.password,
+            onValueChange = { formState = formState.copy(password = it) },
             label = "Password",
             modifier = modifier.fillMaxWidth(),
-            isError = error == AuthFields.Password,
+            isError = passwordError?.isValid == false,
             isPassword = true
         )
+        if (passwordError?.isValid == false) {
+            ErrorText(text = passwordError!!.errorMessage!!)
+        }
 
         Spacer(modifier = modifier.height(8.dp))
 
@@ -99,44 +104,17 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                val validationResponse = validateForm(
-                    RegisterData(username, name, password)
-                )
-                println("Validation Response is: $validationResponse")
-                if (validationResponse == true) {
-                    onRegister(username, name, password)
-                } else {
-                    error = validationResponse.toString()
+                val validationErrors = validateRegisterForm(formState)
+                usernameError = validationErrors["username"]
+                nameError = validationErrors["name"]
+                passwordError = validationErrors["password"]
+
+                if (validationErrors.values.all { it.isValid }) {
+                    onRegister(formState.username, formState.name, formState.password)
                 }
             },
         ) {
             Text("Register")
         }
-
-        if (error.isNotEmpty()) {
-            Text("There is an error in field $error", color = MaterialTheme.colorScheme.error)
-        }
-
     }
-}
-
-
-fun validateForm(data: RegisterData): Any {
-    val (username, name, password) = data
-
-    if (username.length < MIN_STRING_LENGTH || username.length > MAX_STRING_LENGTH) {
-        return "username"
-    }
-
-    if (password.length < MIN_PASSWORD_LENGTH ||
-        password.length > MAX_STRING_LENGTH
-    ) {
-        return "password"
-    }
-
-    if (name.length < MIN_STRING_LENGTH || name.length > MAX_STRING_LENGTH) {
-        return "name"
-    }
-
-    return true
 }

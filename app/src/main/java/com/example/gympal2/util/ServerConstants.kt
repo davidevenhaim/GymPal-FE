@@ -1,8 +1,8 @@
 package com.example.gympal2.util
 
-const val API_BASE_URL = "http://192.168.50.44:3000/"
-const val API_WS_URL = "ws://192.168.50.44:3000"
 const val API_PORT = "3000"
+const val API_BASE_URL = "http://192.168.50.44:$API_PORT"
+const val API_WS_URL = "ws://192.168.50.44:$API_PORT"
 
 const val USER_INITIAL = "user"
 const val GYM_INITIAL = "gym"

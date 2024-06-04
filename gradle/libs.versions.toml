@@ -49,6 +49,8 @@ scarlet = { group = "com.tinder.scarlet", name = "scarlet", version.ref = "scarl
 scarlet-websocket = { group = "com.tinder.scarlet", name = "websocket-okhttp", version.ref = "scarlet" }
 scarlet-coroutines = { group = "com.tinder.scarlet", name = "stream-adapter-coroutines", version.ref = "scarlet" }
 scarlet-gson = { group = "com.tinder.scarlet", name = "message-adapter-gson", version.ref = "scarlet" }
+scarlet-rxjava = { group = "com.tinder.scarlet", name = "stream-adapter-rxjava2", version.ref = "scarlet" }
+
 scarlet-lifecycle-android = { group = "com.tinder.scarlet", name = "lifecycle-android", version.ref = "scarlet" }
 lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose" }

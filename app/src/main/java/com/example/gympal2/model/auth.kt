@@ -1,14 +1,14 @@
 package com.example.gympal2.model
 
 data class LoginData(
-    val username: String,
-    val password: String
+    var username: String = "",
+    var password: String = ""
 )
 
 data class RegisterData(
-    val username: String,
-    val name: String,
-    val password: String
+    val username: String = "",
+    val name: String = "",
+    val password: String = ""
 )
 
 data class UpdateUserData(

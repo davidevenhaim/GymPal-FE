@@ -7,7 +7,7 @@ const val MIN_PASSWORD_LENGTH = 6
 
 var STAR_COUNT = 5
 var MIN_RATING_GOLD_BORDER = 4
-var MAP_ZOOM = 15f
+var MAP_INITIAL_ZOOM = 15f
 
 object SnackbarDuration {
     const val Short = 1500

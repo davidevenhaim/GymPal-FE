@@ -19,8 +19,6 @@ fun HomeScreen(onLogout: () -> Unit) {
     val gymViewModel: GymViewModel = koinViewModel()
     val gyms by gymViewModel.gyms.collectAsState()
 
-    println("Gyms are: $gyms")
-
     Scaffold(
         topBar = { TopNavBar(onLogout) }
     ) {

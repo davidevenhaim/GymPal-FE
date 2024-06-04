@@ -51,7 +51,6 @@ class AuthViewModel(private val authRepository: AuthRepository, private val cont
                     UserStorageData(response.user.id, response.token)
                 )
             } catch (e: Exception) {
-                println("Error in login: $e.message")
                 _authState.value = AuthState.Error(e.message ?: "Unknown Error")
 
             }
@@ -72,7 +71,6 @@ class AuthViewModel(private val authRepository: AuthRepository, private val cont
                     UserStorageData(response.user.id, response.token)
                 )
             } catch (e: Exception) {
-                println("Error is: $e")
                 _authState.value = AuthState.Error(e.message ?: "Login Failed")
             }
         }

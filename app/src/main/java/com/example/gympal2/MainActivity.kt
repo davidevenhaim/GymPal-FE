@@ -49,13 +49,10 @@ fun AppInit() {
     val authState by authViewModel.getAuthState()
 
     val webSocketViewModel: WebSocketViewModel = koinViewModel()
-
     webSocketViewModel.sendMessage("im sending a message to the websocket")
-    webSocketViewModel.onWebSocketMessage("IM sending a message to the websocket")
 
 //    val messages by wsViewModel.messages.collectAsState()
 
-//    println("testing the websocket.")
 //
 //    wsViewModel.sendMessage("hello, im sending message from the websocket")
 //
@@ -84,19 +81,13 @@ fun AppInit() {
 
 @Composable
 fun MainScreen(viewModel: AuthViewModel) {
-    val userData by viewModel.getUser()
-
     HomeScreen { viewModel.logout() }
-
-    println("USER STATE is: $userData ")
-//    println("Hello ${userData.user.name}")
 }
 
 
 @Composable
 fun AuthScreen(viewModel: AuthViewModel) {
     var isLogin by rememberSaveable { mutableStateOf(true) }
-    val authState by viewModel.getAuthState()
 
     val toggleIsLogin = { isLogin = !isLogin }
 
@@ -104,13 +95,11 @@ fun AuthScreen(viewModel: AuthViewModel) {
         LoginScreen(
             { username, password -> viewModel.login(username, password) },
             toggleIsLogin = toggleIsLogin,
-            authState
         )
     } else {
         RegisterScreen(
             { username, name, password -> viewModel.register(username, name, password) },
             toggleIsLogin = toggleIsLogin,
-            authState
         )
     }
 
