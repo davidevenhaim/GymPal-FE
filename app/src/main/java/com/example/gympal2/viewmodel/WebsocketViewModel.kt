@@ -29,7 +29,6 @@ class WebSocketViewModel(private val webSocketService: WebSocketService) : ViewM
         webSocketService.observeMessages()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { message ->
-                println("ASDASDAS asdasasd asd klasjdklsa")
                 _messages.postValue(message)
             }
     }

@@ -12,15 +12,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -29,14 +32,23 @@ import com.example.gympal2.ui.shared.AppTextField
 import com.example.gympal2.util.AuthFields
 import com.example.gympal2.util.ValidationResult
 import com.example.gympal2.util.validateLoginForm
+import com.example.gympal2.viewmodel.AuthViewModel
+import org.koin.androidx.compose.getViewModel
+import androidx.navigation.NavController
+import com.example.gympal2.data.repository.TokenManager
+import com.example.gympal2.util.HOME_SCREEN
+import com.example.gympal2.viewmodel.AuthState
 
 
 @Composable
 fun LoginScreen(
-    onLogin: (String, String) -> Unit,
+    navController: NavController,
     toggleIsLogin: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel = getViewModel()
 ) {
+    val authState by authViewModel.getAuthState()
+
     var formState by remember { mutableStateOf(LoginData()) }
     var usernameError by remember { mutableStateOf<ValidationResult?>(null) }
     var passwordError by remember { mutableStateOf<ValidationResult?>(null) }
@@ -96,11 +108,31 @@ fun LoginScreen(
                 passwordError = validationErrors["password"]
 
                 if (validationErrors.values.all { it.isValid }) {
-                    onLogin(formState.username, formState.password)
+                    authViewModel.login(formState.username, formState.password)
                 }
             },
         ) {
             Text("Login")
+        }
+        authViewModel.getAuthState()
+
+        when(authState) {
+            is AuthState.Loading -> CircularProgressIndicator()
+
+            is AuthState.Success -> {
+                LaunchedEffect(Unit) {
+
+                    navController.navigate(HOME_SCREEN) {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            }
+
+            is AuthState.Error -> {
+                Text((authState as AuthState.Error).message, color = Color.Red)
+            }
+
+            AuthState.Idle ->  Unit
         }
     }
 }

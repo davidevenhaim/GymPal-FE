@@ -6,6 +6,7 @@ import WebSocketService
 import com.example.gympal2.data.network.RetrofitClient
 import com.example.gympal2.data.repository.AuthRepository
 import com.example.gympal2.data.repository.GymRepository
+import com.example.gympal2.data.repository.TokenManager
 import com.example.gympal2.viewmodel.AuthViewModel
 import com.example.gympal2.viewmodel.WebSocketViewModel
 import com.example.gympal2.viewmodel.createScarletInstance
@@ -20,7 +21,9 @@ val appModule = module {
 
     single { AuthRepository(get()) }
 
-    viewModel { AuthViewModel(get(), androidContext()) }
+    single { TokenManager(androidContext()) }
+
+    viewModel { AuthViewModel(get(), get()) }
 
     single { RetrofitClient.gymService }
 
@@ -32,7 +35,7 @@ val appModule = module {
 
     single { get<Scarlet>().create(WebSocketService::class.java) }
 
-    viewModel { WebSocketViewModel(get()) }
+//    viewModel { WebSocketViewModel(get()) }
 
 }
 

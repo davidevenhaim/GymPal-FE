@@ -9,6 +9,9 @@ var STAR_COUNT = 5
 var MIN_RATING_GOLD_BORDER = 4
 var MAP_INITIAL_ZOOM = 15f
 
+const val HOME_SCREEN = "home"
+const val AUTH_SCREEN = "auth"
+
 object SnackbarDuration {
     const val Short = 1500
     const val Long = 2750
@@ -19,3 +22,4 @@ object AuthFields {
     const val Name = "Name"
     const val Password = "Password"
 }
+

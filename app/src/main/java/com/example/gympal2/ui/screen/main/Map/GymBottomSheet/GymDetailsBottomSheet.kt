@@ -21,8 +21,8 @@ import org.koin.androidx.compose.koinViewModel
 fun GymDetailsBottomSheet(gym: Gym, viewModel: WebSocketViewModel2 = viewModel()) {
     val message by viewModel.messageFlow.collectAsState()
 
-    val webSocketViewModel: WebSocketViewModel = koinViewModel()
-    webSocketViewModel.sendMessage("im sending a message to the websocket")
+//    val webSocketViewModel: WebSocketViewModel = koinViewModel()
+//    webSocketViewModel.sendMessage("im sending a message to the websocket")
 
     val tabItems = listOf(
         TabItem(

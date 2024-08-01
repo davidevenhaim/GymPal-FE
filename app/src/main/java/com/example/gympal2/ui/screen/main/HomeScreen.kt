@@ -30,7 +30,6 @@ fun HomeScreen(onLogout: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Map(gyms)
-//            LocationPermission()
         }
     }
 }

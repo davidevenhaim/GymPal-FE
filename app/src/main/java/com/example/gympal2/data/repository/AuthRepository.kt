@@ -10,6 +10,7 @@ import com.example.gympal2.model.UserStorageData
 
 class AuthRepository(private val authService: AuthService) {
     suspend fun login(username: String, password: String): UserState {
+        println("IM on login function")
         return authService.login(LoginData(username, password))
     }
 

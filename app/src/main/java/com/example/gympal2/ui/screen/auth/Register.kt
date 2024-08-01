@@ -12,31 +12,43 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.gympal2.model.RegisterData
 import com.example.gympal2.ui.shared.AppTextField
+import com.example.gympal2.util.AUTH_SCREEN
+import com.example.gympal2.util.HOME_SCREEN
 import com.example.gympal2.util.ValidationResult
 import com.example.gympal2.util.validateRegisterForm
+import com.example.gympal2.viewmodel.AuthState
+import com.example.gympal2.viewmodel.AuthViewModel
+import org.koin.androidx.compose.getViewModel
 
 const val loginNowText = "Already have an account? Click to login"
 
 @Composable
 fun RegisterScreen(
-    onRegister: (String, String, String) -> Unit,
+    navController: NavController,
     toggleIsLogin: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel = getViewModel(),
 ) {
+    val authState by authViewModel.getAuthState()
+
 
     var formState by remember { mutableStateOf(RegisterData()) }
     var usernameError by remember { mutableStateOf<ValidationResult?>(null) }
@@ -110,11 +122,30 @@ fun RegisterScreen(
                 passwordError = validationErrors["password"]
 
                 if (validationErrors.values.all { it.isValid }) {
-                    onRegister(formState.username, formState.name, formState.password)
+                    authViewModel.register(formState.username, formState.name, formState.password)
                 }
             },
         ) {
             Text("Register")
+        }
+        authViewModel.getAuthState()
+
+        when(authState) {
+            is AuthState.Loading -> CircularProgressIndicator()
+
+            is AuthState.Success -> {
+                LaunchedEffect(Unit) {
+                    navController.navigate(HOME_SCREEN) {
+                        popUpTo(AUTH_SCREEN) { inclusive = true }
+                    }
+                }
+            }
+
+            is AuthState.Error -> {
+                Text((authState as AuthState.Error).message, color = Color.Red)
+            }
+
+            is AuthState.Idle -> Unit
         }
     }
 }
