@@ -6,31 +6,30 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
-import com.example.gympal2.data.repository.TokenManager
-import com.example.gympal2.di.appModule
-import com.example.gympal2.ui.screen.auth.LoginScreen
-import com.example.gympal2.ui.screen.auth.RegisterScreen
-import com.example.gympal2.ui.screen.main.HomeScreen
-import com.example.gympal2.ui.theme.GymPal2Theme
-import com.example.gympal2.viewmodel.AuthViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.gympal2.auth.AuthState
+import com.example.gympal2.auth.AuthViewModel
+import com.example.gympal2.auth.TokenManager
+import com.example.gympal2.auth.login.LoginScreen
+import com.example.gympal2.auth.login.LoginStateHolderImpl
+import com.example.gympal2.auth.register.RegisterScreen
+import com.example.gympal2.auth.register.RegisterStateHolderImpl
+import com.example.gympal2.core.ui.theme.GymPal2Theme
+import com.example.gympal2.util.AUTH_SCREEN
+import com.example.gympal2.util.HOME_SCREEN
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.context.startKoin
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.gympal2.util.AUTH_SCREEN
-import com.example.gympal2.util.HOME_SCREEN
-import org.koin.android.ext.android.inject
-
-
 
 class MainActivity : ComponentActivity() {
 
@@ -47,18 +46,24 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GymPal2Theme {
-                AppInit(tokenManager)
+                AppInit()
             }
         }
     }
 }
 
 @Composable
-fun AppInit(tokenManager: TokenManager) {
+fun AppInit() {
     val authViewModel: AuthViewModel = koinViewModel()
     val navController = rememberNavController()
+    val authState by authViewModel.getAuthState()
 
-    val startDestination = if (tokenManager.getToken() != null) HOME_SCREEN else AUTH_SCREEN
+    val startDestination = when (authState) {
+        is AuthState.Success -> HOME_SCREEN
+        is AuthState.Error -> AUTH_SCREEN
+        AuthState.Idle -> AUTH_SCREEN
+        AuthState.Loading -> AUTH_SCREEN
+    }
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(AUTH_SCREEN) { AuthScreen(authViewModel, navController) }
@@ -77,16 +82,20 @@ fun MainScreen(viewModel: AuthViewModel, navController: NavHostController) {
 
 
 @Composable
-fun AuthScreen(viewModel: AuthViewModel, navController: NavHostController) {
+fun AuthScreen(authViewModel: AuthViewModel, navController: NavHostController) {
 
     var isLogin by rememberSaveable { mutableStateOf(true) }
+    val loginStateHolder = remember { LoginStateHolderImpl(authViewModel) }
+    val registerStateHolder = remember { RegisterStateHolderImpl(authViewModel) }
 
-    val toggleIsLogin = { isLogin = !isLogin }
+    val toggleIsLogin = {
+        isLogin = !isLogin
+    }
 
     if (isLogin) {
-        LoginScreen(navController, toggleIsLogin = toggleIsLogin)
+        LoginScreen(navController, toggleIsLogin = toggleIsLogin, loginStateHolder.state)
     } else {
-        RegisterScreen(navController, toggleIsLogin = toggleIsLogin,)
+        RegisterScreen(navController, toggleIsLogin = toggleIsLogin, registerStateHolder.state)
     }
 
 }
