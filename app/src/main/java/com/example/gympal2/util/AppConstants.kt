@@ -29,8 +29,8 @@ object AuthFields {
 }
 
 data class Location(
-    val lat: Double,
-    val lng: Double
+    var lat: Double,
+    var lng: Double
 )
 
 data class FormField(

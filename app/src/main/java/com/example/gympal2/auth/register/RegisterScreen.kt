@@ -44,7 +44,7 @@ fun RegisterScreen(
     authViewModel: AuthViewModel = koinViewModel(),
 ) {
     val screenState = state.collectAsState()
-    val authState by authViewModel.getAuthState()
+    val authState by authViewModel.getAuthState().collectAsState()
 
     Column(
         modifier = modifier

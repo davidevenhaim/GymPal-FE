@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gympal2.auth.AuthState
 import com.example.gympal2.auth.AuthViewModel
-import com.example.gympal2.auth.TokenManager
 import com.example.gympal2.auth.login.LoginScreen
 import com.example.gympal2.auth.login.LoginStateHolderImpl
 import com.example.gympal2.auth.register.RegisterScreen
@@ -25,7 +25,6 @@ import com.example.gympal2.auth.register.RegisterStateHolderImpl
 import com.example.gympal2.core.ui.theme.GymPal2Theme
 import com.example.gympal2.util.AUTH_SCREEN
 import com.example.gympal2.util.HOME_SCREEN
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.compose.koinViewModel
@@ -36,7 +35,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val tokenManager: TokenManager by inject()
 
         startKoin {
             androidLogger()
@@ -56,7 +54,7 @@ class MainActivity : ComponentActivity() {
 fun AppInit() {
     val authViewModel: AuthViewModel = koinViewModel()
     val navController = rememberNavController()
-    val authState by authViewModel.getAuthState()
+    val authState by authViewModel.getAuthState().collectAsState()
 
     val startDestination = when (authState) {
         is AuthState.Success -> HOME_SCREEN
@@ -64,7 +62,6 @@ fun AppInit() {
         AuthState.Idle -> AUTH_SCREEN
         AuthState.Loading -> AUTH_SCREEN
     }
-
     NavHost(navController = navController, startDestination = startDestination) {
         composable(AUTH_SCREEN) { AuthScreen(authViewModel, navController) }
         composable(HOME_SCREEN) { MainScreen(authViewModel, navController) }

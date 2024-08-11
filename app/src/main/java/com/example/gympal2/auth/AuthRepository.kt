@@ -1,13 +1,14 @@
 package com.example.gympal2.auth
 
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class AuthRepository(
     private val authService: AuthService, // network connection
     private val tokenManager: TokenManager // local connection
 ) {
-    var authState = mutableStateOf<AuthState>(AuthState.Idle)
+    var authState = MutableStateFlow<AuthState>(AuthState.Idle)
         private set
 
     private val _userData = mutableStateOf<UserResponse?>(null)
@@ -29,11 +30,12 @@ class AuthRepository(
                 tokenManager.saveToken((response.token))
                 authState.value = AuthState.Success(response.token)
             } else {
+                println("Setting auth state value to error.")
                 authState.value = AuthState.Error("Login Failed")
             }
 
         } catch (e: Exception) {
-            println("e.localizedMessage: ${e.localizedMessage}")
+            println("Setting auth state value to error.")
             authState.value = AuthState.Error("User/Password is incorrect")
         }
 

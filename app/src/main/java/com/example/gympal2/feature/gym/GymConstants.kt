@@ -1,12 +1,16 @@
 package com.example.gympal2.feature.gym
 
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.gympal2.core.localDB.GYM_NAME
 import com.example.gympal2.util.Location
 import java.util.Date
 
+@Entity(tableName = GYM_NAME)
 data class Gym(
+    @PrimaryKey val id: String,
     val createdAt: Date,
-    val id: String,
     val location: Location,
     val name: String,
     val rating: Int,

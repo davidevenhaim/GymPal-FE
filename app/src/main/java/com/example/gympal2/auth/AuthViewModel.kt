@@ -1,16 +1,16 @@
 package com.example.gympal2.auth
 
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel(), KoinComponent {
 
-    fun getAuthState(): MutableState<AuthState> = authRepository.authState
+    fun getAuthState(): StateFlow<AuthState> = authRepository.authState
 
     fun login(username: String, password: String) {
         viewModelScope.launch { authRepository.login(username, password) }
