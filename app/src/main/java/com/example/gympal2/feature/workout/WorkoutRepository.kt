@@ -1,47 +1,47 @@
-package com.example.gympal2.feature.gym
+package com.example.gympal2.feature.workout
 
 import NetworkUtil
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import com.example.gympal2.core.localDB.DatabaseProvider
-import com.example.gympal2.core.localDB.GymDao
 import com.example.gympal2.core.localDB.OfflineRequestDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class GymRepository(
-    private val apiService: GymService,
+class WorkoutRepository(
+    private val apiService: WorkoutService,
+    private val networkUtil: NetworkUtil,
     context: Context,
-    private val networkUtil: NetworkUtil
 ) {
+    var workouts = MutableStateFlow<List<Workout>>(emptyList())
+        private set
     private val scope = CoroutineScope(Dispatchers.Main)
-    private val _gyms = MutableStateFlow<List<Gym>>(emptyList())
-    val gyms: StateFlow<List<Gym>> get() = _gyms
 
-    private val gymDao: GymDao = DatabaseProvider.getDatabase(context).gymDao()
     private val offlineRequestDao: OfflineRequestDao =
         DatabaseProvider.getDatabase(context).offlineRequestDao()
+
+    suspend fun createWorkout(workout: WorkoutData): Boolean {
+        println("workout: $workout")
+        return apiService.createWorkout(workout)
+    }
 
     init {
         observeNetworkChanges()
     }
 
-
-    suspend fun fetchGyms() {
-        println("Is online : ${networkUtil.isOnline()}")
-        if (networkUtil.isOnline()) {
-            val currentGyms = apiService.getAllGyms()
-            gymDao.insertGyms(currentGyms)
-            _gyms.value = currentGyms
-        } else {
-            _gyms.value = gymDao.getAllGyms()
+    suspend fun getGymWorkouts(gymId: String) {
+        scope.launch {
+            println("Waiting for Response from gyms is")
+            val res = apiService.getGymWorkouts(gymId)
+            println("Response from gyms is: $res")
+//            if (res != null && res.isNotEmpty()) {
+//                workouts.value = res
+//            }
         }
     }
-
 
     private fun observeNetworkChanges() {
         networkUtil.registerNetworkCallback(object : ConnectivityManager.NetworkCallback() {
@@ -67,6 +67,5 @@ class GymRepository(
 //            offlineRequestDao.deleteRequest(request)
         }
     }
-
 
 }

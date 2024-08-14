@@ -9,8 +9,9 @@ import org.koin.core.component.KoinComponent
 
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel(), KoinComponent {
-
+    
     fun getAuthState(): StateFlow<AuthState> = authRepository.authState
+
 
     fun login(username: String, password: String) {
         viewModelScope.launch { authRepository.login(username, password) }

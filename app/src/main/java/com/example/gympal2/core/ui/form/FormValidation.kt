@@ -8,7 +8,7 @@ data class ValidationResult(val isValid: Boolean, val errorMessage: String? = nu
 
 fun validateString(str: String): ValidationResult {
     return if (str.isBlank()) {
-        ValidationResult(false, "Name cannot be empty")
+        ValidationResult(false, "Field cannot be empty")
     } else {
         ValidationResult(true)
     }

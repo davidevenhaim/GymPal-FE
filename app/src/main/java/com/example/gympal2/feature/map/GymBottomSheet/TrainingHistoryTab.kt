@@ -15,10 +15,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.gympal2.R
 import com.example.gympal2.feature.gym.WorkHours
+import com.example.gympal2.feature.workout.Workout
 
 @Composable
-fun TrainingHistoryTab() {
-//    TODO: asdasdas
+fun TrainingHistoryTab(gymWorkouts: List<Workout>) {
+    println("gymWorkouts: $gymWorkouts")
+
     Box(modifier = Modifier.fillMaxSize()) {
         Text("Here will be a training history tab")
     }

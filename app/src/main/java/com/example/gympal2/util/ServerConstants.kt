@@ -6,7 +6,8 @@ const val API_WS_URL = "ws://192.168.50.232:$API_PORT"
 
 const val USER_INITIAL = "user"
 const val GYM_INITIAL = "gym"
-const val FEEDBACK_INITIAL = "feedback"
+const val WORKOUT_INITIAL = "workout"
+
 
 const val REGISTER_USER_URL = "$USER_INITIAL/register"
 const val LOGIN_USER_URL = "$USER_INITIAL/login"
@@ -17,5 +18,5 @@ const val GET_ALL_GYMS_URL = "$GYM_INITIAL/all"
 const val CREATE_GYM_URL = "$GYM_INITIAL/create"
 const val UPDATE_GYM_URL = "$GYM_INITIAL/update" //need id as param after update.
 
-const val CREATE_FEEDBACK_URL = "$FEEDBACK_INITIAL/create"
-const val GYM_FEEDBACK_URL = "$FEEDBACK_INITIAL/gym"
+const val CREATE_WORKOUT_URL = "$WORKOUT_INITIAL/create"
+const val GET_GYM_WORKOUT_URL = "$WORKOUT_INITIAL/gym"

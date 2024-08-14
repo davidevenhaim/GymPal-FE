@@ -14,18 +14,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.gympal2.feature.gym.Gym
-import com.example.gympal2.feature.workout.WorkoutForm
+import com.example.gympal2.feature.workout.WorkoutFormScreen
+import com.example.gympal2.feature.workout.WorkoutFormStateHolder
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
-fun GymInfoTab(gym: Gym) {
+fun GymInfoTab(gym: Gym, screenState: StateFlow<WorkoutFormStateHolder.WorkoutFormState>) {
+
     var isCreatingWorkout by remember { mutableStateOf(false) }
 
     if (isCreatingWorkout) {
-        WorkoutForm { submittedFormState ->
-            // Handle form submission
-            println("Submitted form is: $submittedFormState")
-        }
+        WorkoutFormScreen(state = screenState, currentGymId = gym.id)
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             gym.run {

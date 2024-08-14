@@ -8,6 +8,7 @@ import com.example.gympal2.core.localDB.AppDatabase
 import com.example.gympal2.core.localDB.DB_NAME
 import com.example.gympal2.core.network.websocketModule
 import com.example.gympal2.feature.gym.gymModule
+import com.example.gympal2.feature.workout.workoutModule
 import org.koin.dsl.module
 
 val appModule = module {
@@ -29,7 +30,8 @@ val appModule = module {
     includes(
         authModule,
         gymModule,
-        websocketModule
+        workoutModule,
+        websocketModule,
     )
 
 }

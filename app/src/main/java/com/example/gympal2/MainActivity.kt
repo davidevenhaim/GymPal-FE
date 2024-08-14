@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -56,6 +57,7 @@ fun AppInit() {
     val navController = rememberNavController()
     val authState by authViewModel.getAuthState().collectAsState()
 
+
     val startDestination = when (authState) {
         is AuthState.Success -> HOME_SCREEN
         is AuthState.Error -> AUTH_SCREEN
@@ -79,11 +81,17 @@ fun MainScreen(viewModel: AuthViewModel, navController: NavHostController) {
 
 
 @Composable
-fun AuthScreen(authViewModel: AuthViewModel, navController: NavHostController) {
+fun AuthScreen(
+    authViewModel: AuthViewModel,
+    navController: NavHostController,
+) {
 
     var isLogin by rememberSaveable { mutableStateOf(true) }
     val loginStateHolder = remember { LoginStateHolderImpl(authViewModel) }
     val registerStateHolder = remember { RegisterStateHolderImpl(authViewModel) }
+    
+//    val context = LocalContext.current
+//    val networkUtil = NetworkUtil(context)
 
     val toggleIsLogin = {
         isLogin = !isLogin

@@ -11,14 +11,23 @@ class AuthRepository(
     var authState = MutableStateFlow<AuthState>(AuthState.Idle)
         private set
 
-    private val _userData = mutableStateOf<UserResponse?>(null)
+    var _userData = mutableStateOf<UserResponse?>(null)
+        private set
 
     init {
         val token = tokenManager.getToken()
+        val userId = tokenManager.getUserId()
 
-        if (tokenManager.isTokenValid(token)) {
+        println("Userid: $userId")
+        println("token: $token")
+
+        if (tokenManager.isTokenValid(token) && !userId.isNullOrBlank()) {
             authState.value = AuthState.Success(token!!)
         }
+    }
+
+    fun getUserId(): String {
+        return tokenManager.getUserId() ?: ""
     }
 
     suspend fun login(username: String, password: String) {
@@ -27,19 +36,18 @@ class AuthRepository(
             val response = authService.login(LoginData(username, password))
             if (response.token.isNotEmpty()) {
                 _userData.value = response
-                tokenManager.saveToken((response.token))
+                tokenManager.saveToken(response.token)
+                tokenManager.saveUserId(response.user.id)
                 authState.value = AuthState.Success(response.token)
             } else {
-                println("Setting auth state value to error.")
                 authState.value = AuthState.Error("Login Failed")
             }
 
         } catch (e: Exception) {
-            println("Setting auth state value to error.")
             authState.value = AuthState.Error("User/Password is incorrect")
         }
 
-        println("Auth State: ${authState.value}")
+        println("Auth State is: ${authState.value}")
     }
 
     suspend fun register(username: String, name: String, password: String) {
@@ -47,6 +55,8 @@ class AuthRepository(
             val response = authService.register(RegisterData(username, name, password))
 
             authState.value = AuthState.Success(response.token)
+            tokenManager.saveToken(response.token)
+            tokenManager.saveUserId(response.user.id)
             _userData.value = response
         } catch (e: Exception) {
             authState.value = AuthState.Error("${e.message}")
@@ -57,11 +67,8 @@ class AuthRepository(
         authState.value = AuthState.Idle
         _userData.value = null
         tokenManager.clearToken()
+        tokenManager.clearUserId()
         return true
-    }
-
-    suspend fun getUserFromToken(data: UserStorageData): UserResponse {
-        return authService.getUserFromToken(data)
     }
 }
 
