@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.gympal2"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -88,7 +88,7 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.junit)
     implementation(libs.androidx.junit)
-    
+
     kapt(libs.room.compiler)
 
     testImplementation(libs.junit)

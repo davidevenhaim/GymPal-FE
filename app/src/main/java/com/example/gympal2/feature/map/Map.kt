@@ -1,7 +1,5 @@
 package com.example.gympal2.feature.map
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +27,6 @@ import kotlinx.coroutines.launch
 
 val centerTlvLocation = LatLng(32.0853, 34.7818)
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Map(gyms: List<Gym>) {
