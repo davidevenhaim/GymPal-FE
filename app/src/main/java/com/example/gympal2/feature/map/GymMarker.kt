@@ -15,7 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.gympal2.R
 import com.example.gympal2.feature.gym.Gym
-import com.example.gympal2.feature.gym.checkIfGymOpen
 import com.example.gympal2.util.MIN_RATING_GOLD_BORDER
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerComposable
@@ -48,7 +47,8 @@ fun GymMarker(
         println("gym is selected: $isSelected")
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
-                painter = painterResource(id = if (checkIfGymOpen(gym.workingHours)) markerPair.first else markerPair.second),
+
+                painter = painterResource(id = if (gym.isOpen) markerPair.first else markerPair.second),
                 contentDescription = "",
                 modifier = Modifier
                     .size(40.dp)
