@@ -15,25 +15,25 @@ data class Gym(
     val name: String,
     val rating: Int,
     val workingHours: List<WorkHours>,
-)
+) {
+    data class WorkHours(
+        val isOpen: Boolean,
+        val start: String,
+        val end: String,
+        val day: DaysOfWeek,
+    ) {
+        enum class DaysOfWeek {
+            Sunday,
+            Monday,
+            Tuesday,
+            Wednesday,
+            Thursday,
+            Friday,
+            Saturday,
+        }
+    }
 
-
-data class WorkHours(
-    val isOpen: Boolean,
-    val start: String,
-    val end: String,
-    val day: DaysOfWeek,
-
-    )
-
-enum class DaysOfWeek {
-    Sunday,
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
 }
+
 
 const val GYM_POLLING_DELAY = 20000

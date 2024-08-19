@@ -1,21 +1,22 @@
 package com.example.gympal2.feature.map
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
+import NetworkUtil
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import com.example.gympal2.NEW_WORKOUT_SCREEN
 import com.example.gympal2.feature.gym.Gym
 import com.example.gympal2.feature.map.GymBottomSheet.GymDetailsBottomSheet
 import com.example.gympal2.util.MAP_INITIAL_ZOOM
@@ -29,16 +30,22 @@ import kotlinx.coroutines.launch
 
 val centerTlvLocation = LatLng(32.0853, 34.7818)
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Map(gyms: List<Gym>) {
+fun Map(
+    navController: NavController,
+    gyms: List<Gym>,
+    selectedGym: Gym?,
+    onChangeGym: (Gym) -> Unit
+) {
     val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState()
 
-    var selectedGym by remember { mutableStateOf<Gym?>(null) }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
+    val context = LocalContext.current
+    val networkUtil = NetworkUtil(context)
+
+    val isOnline by networkUtil.isOnlineState.collectAsState()
+
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
@@ -47,14 +54,23 @@ fun Map(gyms: List<Gym>) {
         position = CameraPosition.fromLatLngZoom(centerTlvLocation, MAP_INITIAL_ZOOM)
     }
 
-    if (isSheetOpen) {
+    LaunchedEffect(key1 = selectedGym) {
+        if (selectedGym?.id?.isNotBlank() == true) {
+            isSheetOpen = true
+        }
+    }
+
+    if (isSheetOpen && selectedGym !== null) {
         ModalBottomSheet(
             onDismissRequest = { isSheetOpen = false },
             sheetState = sheetState,
             modifier = Modifier.fillMaxSize()
         ) {
-            selectedGym?.let { GymDetailsBottomSheet(it) } ?: Box {
-                Text(text = "Something went wrong")
+            GymDetailsBottomSheet(
+                selectedGym,
+                isOnline = isOnline
+            ) {
+                navController.navigate("$NEW_WORKOUT_SCREEN/${selectedGym.id}")
             }
         }
     }
@@ -67,9 +83,10 @@ fun Map(gyms: List<Gym>) {
     ) {
         for (gym in gyms) {
             GymMarker(
-                gym = gym, {
+                gym = gym,
+                onMarkerClick = {
                     isSheetOpen = true
-                    selectedGym = gym
+                    onChangeGym(gym)
                     coroutineScope.launch {
                         changeMapsLocation(cameraPositionState, it)
                     }

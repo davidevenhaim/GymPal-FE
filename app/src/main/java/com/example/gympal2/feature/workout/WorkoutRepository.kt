@@ -6,6 +6,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import com.example.gympal2.core.localDB.DatabaseProvider
 import com.example.gympal2.core.localDB.OfflineRequestDao
+import com.example.gympal2.core.localDB.OfflineRequestEntity
+import com.example.gympal2.util.CREATE_WORKOUT_URL
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +19,7 @@ class WorkoutRepository(
     private val networkUtil: NetworkUtil,
     context: Context,
 ) {
+    private val gson = Gson()
     var workouts = MutableStateFlow<List<Workout>>(emptyList())
         private set
     private val scope = CoroutineScope(Dispatchers.Main)
@@ -24,8 +28,17 @@ class WorkoutRepository(
         DatabaseProvider.getDatabase(context).offlineRequestDao()
 
     suspend fun createWorkout(workout: WorkoutData): Boolean {
-        println("workout: $workout")
-        return apiService.createWorkout(workout)
+        if (networkUtil.isOnlineState.value) {
+            return apiService.createWorkout(workout)
+        } else {
+            offlineRequestDao.insertRequest(
+                request = OfflineRequestEntity(
+                    requestType = CREATE_WORKOUT_URL,
+                    payload = gson.toJson(workout)
+                )
+            )
+            return true
+        }
     }
 
     init {
@@ -33,13 +46,16 @@ class WorkoutRepository(
     }
 
     suspend fun getGymWorkouts(gymId: String) {
-        scope.launch {
-            println("Waiting for Response from gyms is")
-            val res = apiService.getGymWorkouts(gymId)
-            println("Response from gyms is: $res")
-//            if (res != null && res.isNotEmpty()) {
-//                workouts.value = res
-//            }
+        if (networkUtil.isOnlineState.value) {
+            scope.launch {
+                try {
+                    val res = apiService.getGymWorkouts(gymId) ?: listOf()
+                    workouts.value = res
+                } catch (e: Exception) {
+                    workouts.value = listOf()
+                    println("Error is: ${e.message}")
+                }
+            }
         }
     }
 
@@ -50,21 +66,30 @@ class WorkoutRepository(
                     processOfflineRequests()
                 }
             }
-
-            override fun onLost(network: Network) {
-                // Handle network lost
-                println("ASDASDasd network lost")
-            }
         })
     }
 
     private suspend fun processOfflineRequests() {
+        if (!networkUtil.isOnlineState.value) return
+
         val requests = offlineRequestDao.getAllRequests()
+        if (requests.isEmpty()) {
+            return
+        }
+
         for (request in requests) {
-            // Process each request and send to server
-            println("Request is: $request")
-            // If successful, delete the request from the database
-//            offlineRequestDao.deleteRequest(request)
+            if (request.requestType == CREATE_WORKOUT_URL) {
+                val workoutData: WorkoutData =
+                    gson.fromJson(request.payload, WorkoutData::class.java)
+                try {
+                    val res = apiService.createWorkout(workoutData)
+                    if (res) {
+                        offlineRequestDao.deleteRequest(request)
+                    }
+                } catch (e: Exception) {
+                    println("Error is: ${e.message}")
+                }
+            }
         }
     }
 

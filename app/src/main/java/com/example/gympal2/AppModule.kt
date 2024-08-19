@@ -6,7 +6,7 @@ import androidx.room.Room
 import com.example.gympal2.auth.authModule
 import com.example.gympal2.core.localDB.AppDatabase
 import com.example.gympal2.core.localDB.DB_NAME
-import com.example.gympal2.core.network.websocketModule
+import com.example.gympal2.core.network.networkModule
 import com.example.gympal2.feature.gym.gymModule
 import com.example.gympal2.feature.workout.workoutModule
 import org.koin.dsl.module
@@ -14,11 +14,7 @@ import org.koin.dsl.module
 val appModule = module {
     single { get<Application>() }
 
-    // Provide the Room Database
-
-//    single { get<AppDatabase>().offlineRequestDao() }
-
-    factory { NetworkUtil(get()) }
+    single { NetworkUtil(get()) }
 
     single {
         Room.databaseBuilder(
@@ -28,10 +24,10 @@ val appModule = module {
     }
 
     includes(
+        networkModule,
         authModule,
         gymModule,
-        workoutModule,
-        websocketModule,
+        workoutModule
     )
 
 }

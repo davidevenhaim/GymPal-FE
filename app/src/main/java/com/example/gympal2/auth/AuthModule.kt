@@ -1,17 +1,17 @@
 package com.example.gympal2.auth
 
 import com.example.gympal2.auth.login.LoginStateHolderImpl
-import com.example.gympal2.core.network.RetrofitClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import retrofit2.Retrofit
 
 val authModule = module {
-    factory { RetrofitClient.authService }
+    factory { get<Retrofit>().create(AuthService::class.java) }
 
     factory { TokenManager(androidContext()) }
 
-    factory { AuthRepository(get(), get()) }
+    single { AuthRepository(get(), get()) }
 
     factory { LoginStateHolderImpl(get()) }
 

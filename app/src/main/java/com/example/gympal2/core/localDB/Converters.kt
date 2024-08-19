@@ -1,7 +1,7 @@
 package com.example.gympal2.core.localDB
 
 import androidx.room.TypeConverter
-import com.example.gympal2.feature.gym.WorkHours
+import com.example.gympal2.feature.gym.Gym
 import com.example.gympal2.util.Location
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -42,14 +42,14 @@ class Converters {
 
     //    Working Hours converters
     @TypeConverter
-    fun workHoursFromString(value: String): List<WorkHours> {
-        val workHours = object : TypeToken<List<WorkHours>>() {}.type
+    fun workHoursFromString(value: String): List<Gym.WorkHours> {
+        val workHours = object : TypeToken<List<Gym.WorkHours>>() {}.type
 
         return gson.fromJson(value, workHours)
     }
 
     @TypeConverter
-    fun workHoursToString(value: List<WorkHours>): String {
+    fun workHoursToString(value: List<Gym.WorkHours>): String {
         return gson.toJson(value)
     }
 }

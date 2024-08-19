@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.gympal2"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -71,7 +71,6 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
     implementation(libs.scarlet)
-    implementation(libs.scarlet.websocket)
     implementation(libs.scarlet.coroutines)
     implementation(libs.scarlet.lifecycle.android)
     implementation(libs.scarlet.gson)
@@ -88,7 +87,9 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.junit)
     implementation(libs.androidx.junit)
-    
+    implementation(libs.lottieCompose)
+
+
     kapt(libs.room.compiler)
 
     testImplementation(libs.junit)

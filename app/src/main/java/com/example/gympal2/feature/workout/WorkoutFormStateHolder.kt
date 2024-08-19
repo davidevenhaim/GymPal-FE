@@ -48,7 +48,7 @@ class WorkoutFormStateHolderImpl(private val workoutViewModel: WorkoutViewModel)
     override val state: StateFlow<WorkoutFormStateHolder.WorkoutFormState>
         get() = mutableState
 
-    fun setGymId(gymId: String) {
+    private fun setGymId(gymId: String) {
         mutableState.update {
             it.copy(
                 gym = gymId
@@ -56,8 +56,7 @@ class WorkoutFormStateHolderImpl(private val workoutViewModel: WorkoutViewModel)
         }
     }
 
-    fun addExercise() {
-        val key = UUID.randomUUID()
+    private fun addExercise() {
         mutableState.update {
             it.copy(
                 exercises = (it.exercises + createExerciseFormField()).toMutableList()
@@ -65,7 +64,7 @@ class WorkoutFormStateHolderImpl(private val workoutViewModel: WorkoutViewModel)
         }
     }
 
-    fun removeExercise(index: Int) {
+    private fun removeExercise(index: Int) {
         mutableState.update {
             it.copy(
                 exercises = it.exercises.toMutableList().apply { removeAt(index) }

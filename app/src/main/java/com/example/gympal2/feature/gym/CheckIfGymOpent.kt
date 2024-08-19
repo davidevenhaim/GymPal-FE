@@ -1,15 +1,12 @@
 package com.example.gympal2.feature.gym
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun checkIfGymOpen(workingHours: List<WorkHours>): Boolean {
+fun checkIfGymOpen(workingHours: List<Gym.WorkHours>): Boolean {
     val currentDate = LocalDate.now()
     val currentTime = LocalTime.now()
     val currentDay = getCurrentDay(currentDate)
@@ -29,7 +26,6 @@ fun checkIfGymOpen(workingHours: List<WorkHours>): Boolean {
     return currentTime > openTime && currentTime < closeTime
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getCurrentDay(currentTime: LocalDate): String {
     val currentDayOfWeek = currentTime.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
 
@@ -37,7 +33,6 @@ fun getCurrentDay(currentTime: LocalDate): String {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun changeTime(currentTime: LocalTime, hours: Int, minutes: Int): LocalTime {
     return currentTime.withHour(hours).withMinute(minutes)
 }

@@ -24,6 +24,7 @@ rxkotlin = "2.4.0"
 navigationRuntimeKtx = "2.7.7"
 navigationCompose = "2.7.7"
 room = "2.6.1"
+lottie = "6.0.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -53,7 +54,6 @@ datastore-core = { group = "androidx.datastore", name = "datastore-core", versio
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "gms" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "maps_compose" }
 scarlet = { group = "com.tinder.scarlet", name = "scarlet", version.ref = "scarlet" }
-scarlet-websocket = { group = "com.tinder.scarlet", name = "websocket-okhttp", version.ref = "scarlet" }
 scarlet-coroutines = { group = "com.tinder.scarlet", name = "stream-adapter-coroutines", version.ref = "scarlet" }
 scarlet-gson = { group = "com.tinder.scarlet", name = "message-adapter-gson", version.ref = "scarlet" }
 scarlet-rxjava = { group = "com.tinder.scarlet", name = "stream-adapter-rxjava2", version.ref = "scarlet" }
@@ -69,5 +69,4 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-
-
+lottieCompose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }

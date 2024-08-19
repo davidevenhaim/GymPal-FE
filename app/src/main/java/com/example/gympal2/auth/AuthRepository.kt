@@ -18,9 +18,6 @@ class AuthRepository(
         val token = tokenManager.getToken()
         val userId = tokenManager.getUserId()
 
-        println("Userid: $userId")
-        println("token: $token")
-
         if (tokenManager.isTokenValid(token) && !userId.isNullOrBlank()) {
             authState.value = AuthState.Success(token!!)
         }
@@ -47,17 +44,20 @@ class AuthRepository(
             authState.value = AuthState.Error("User/Password is incorrect")
         }
 
-        println("Auth State is: ${authState.value}")
     }
 
     suspend fun register(username: String, name: String, password: String) {
+        authState.value = AuthState.Loading
         try {
             val response = authService.register(RegisterData(username, name, password))
-
-            authState.value = AuthState.Success(response.token)
-            tokenManager.saveToken(response.token)
-            tokenManager.saveUserId(response.user.id)
-            _userData.value = response
+            if (response.token.isNotEmpty()) {
+                authState.value = AuthState.Success(response.token)
+                tokenManager.saveToken(response.token)
+                tokenManager.saveUserId(response.user.id)
+                _userData.value = response
+            } else {
+                authState.value = AuthState.Error("Login Failed")
+            }
         } catch (e: Exception) {
             authState.value = AuthState.Error("${e.message}")
         }

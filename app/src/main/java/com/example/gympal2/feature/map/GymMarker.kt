@@ -1,7 +1,5 @@
 package com.example.gympal2.feature.map
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -24,7 +22,6 @@ import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GymMarker(
     gym: Gym,
@@ -48,7 +45,6 @@ fun GymMarker(
 
 
     ) {
-        println("gym is selected: $isSelected")
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = if (checkIfGymOpen(gym.workingHours)) markerPair.first else markerPair.second),

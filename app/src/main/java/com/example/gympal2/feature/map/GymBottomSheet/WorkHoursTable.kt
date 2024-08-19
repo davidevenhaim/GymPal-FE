@@ -1,9 +1,7 @@
 package com.example.gympal2.feature.map.GymBottomSheet
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,20 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.gympal2.R
-import com.example.gympal2.feature.gym.WorkHours
-import com.example.gympal2.feature.workout.Workout
+import com.example.gympal2.feature.gym.Gym
 
 @Composable
-fun TrainingHistoryTab(gymWorkouts: List<Workout>) {
-    println("gymWorkouts: $gymWorkouts")
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Text("Here will be a training history tab")
-    }
-}
-
-@Composable
-fun WorkHoursTable(workingHours: List<WorkHours>) {
+fun WorkHoursTable(workingHours: List<Gym.WorkHours>) {
 
     for (workHours in workingHours) {
         WorkHours(workHours)
@@ -36,7 +24,7 @@ fun WorkHoursTable(workingHours: List<WorkHours>) {
 }
 
 @Composable
-fun WorkHours(workHours: WorkHours) {
+fun WorkHours(workHours: Gym.WorkHours) {
     workHours.run {
 
         Row(
@@ -50,7 +38,6 @@ fun WorkHours(workHours: WorkHours) {
                 modifier = Modifier
                     .size(20.dp)
                     .padding(5.dp)
-
             )
             Text(text = "$day ")
             if (isOpen) {

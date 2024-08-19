@@ -26,7 +26,7 @@ class GymViewModel(private val gymRepository: GymRepository, private val network
                 while (true) {
                     gymRepository.fetchGyms()
                     delay(GYM_POLLING_DELAY.toLong())
-                    if (!networkUtil.isOnline()) break
+                    if (!networkUtil.isOnlineState.value) break
                 }
             } catch (e: Exception) {
                 println("Error encountered! $e")
