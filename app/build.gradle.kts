@@ -24,6 +24,9 @@ android {
             useSupportLibrary = true
         }
     }
+    packaging {
+        resources.excludes += "**/*"
+    }
 
     buildTypes {
         release {
@@ -88,17 +91,16 @@ dependencies {
     implementation(libs.junit)
     implementation(libs.androidx.junit)
     implementation(libs.lottieCompose)
-
+    implementation("com.github.haifengl:smile-core:3.1.1")
+    implementation("com.github.haifengl:smile-kotlin:3.1.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
 
     kapt(libs.room.compiler)
-
     testImplementation(libs.junit)
-
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
